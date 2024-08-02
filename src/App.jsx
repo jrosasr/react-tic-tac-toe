@@ -2,13 +2,14 @@
 
 import { useState } from 'react'
 import confetti from 'canvas-confetti'
-import { Square } from './components/Square.jsx'
 import { TURNS } from './constants.js'
 import { checkWinnerFrom, checkEndGameFrom } from './logic/board.js'
 import { WinnerModal } from './components/WinnerModal.jsx'
+import { Header } from './components/Header.jsx'
+import { Square } from './components/Square.jsx'
 import { saveGameStorage, resetGameStorage } from './logic/storage/index.js'
 
-function App () {
+function App() {
   const [board, setBoard] = useState(() => {
     const boardFromStorage = window.localStorage.getItem('board')
     return boardFromStorage ? JSON.parse(boardFromStorage) : Array(9).fill(null)
@@ -52,37 +53,41 @@ function App () {
   }
 
   return (
-    <main className='board'>
-      <h1>Tic Tac Toe</h1>
-      <button onClick={resetGame}>Empezar de nuevo</button>
+    <>
+      <Header />
+      <main className='board'>
+        <section className='my-4'>
+          <h1 className='text-5xl text-white'>Tic Tac Toe</h1>
+          <h1 className='text-xl text-white underline decoration-2 decoration-purple-500'>React vs. Vue</h1>
+        </section>
+        <button onClick={resetGame}>Empezar de nuevo</button>
+        <section className='game'>
+          {
+            board.map((square, index) => {
+              return (
+                <Square
+                  key={index}
+                  index={index}
+                  updateBoard={updateBoard}
+                >
+                  {square}
+                </Square>
+              )
+            })
+          }
+        </section>
+        <section className='turn'>
+          <Square isSelected={turn === TURNS.X}>
+            {TURNS.X}
+          </Square>
+          <Square isSelected={turn === TURNS.O}>
+            {TURNS.O}
+          </Square>
+        </section>
 
-      <section className='game'>
-        {
-          board.map((square, index) => {
-            return (
-              <Square
-                key={index}
-                index={index}
-                updateBoard={updateBoard}
-              >
-                {square}
-              </Square>
-            )
-          })
-        }
-      </section>
-      <section className='turn'>
-        <Square isSelected={turn === TURNS.X}>
-          {TURNS.X}
-        </Square>
-        <Square isSelected={turn === TURNS.O}>
-          {TURNS.O}
-        </Square>
-      </section>
-
-      <WinnerModal winner={winner} resetGame={resetGame} />
-    </main>
-
+        <WinnerModal winner={winner} resetGame={resetGame} />
+      </main>
+    </>
   )
 }
 
